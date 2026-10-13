@@ -1,0 +1,12 @@
+{
+  "name": "runtime",
+  "description": "Runtime: skills and plugins for agentic engineering",
+  "owner": { "name": "Evan Jennings" },
+  "plugins": [
+    {
+      "name": "hello-runtime",
+      "source": "./plugins/hello-runtime",
+      "description": "A test plugin: proves a Runtime skill loads and its bundled script runs on this machine"
+    }
+  ]
+}
