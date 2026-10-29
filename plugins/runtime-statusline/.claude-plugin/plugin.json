@@ -1,0 +1,8 @@
+{
+  "name": "runtime-statusline",
+  "displayName": "Runtime status line",
+  "version": "0.1.0",
+  "description": "A two-line Claude Code status line: whether the session is working, then context, 5-hour and 7-day use, model and effort, and repo:branch",
+  "author": { "name": "Evan Jennings" },
+  "license": "Apache-2.0"
+}
