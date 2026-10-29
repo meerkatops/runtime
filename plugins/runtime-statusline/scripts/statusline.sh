@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Runtime status line for Claude Code. Two lines:
-#   ▶ working this session  (or ◼ idle on repo:branch)
+#   ▶ working <card·stage·step, or this session>  (or ◼ runtime idle on repo:branch)
 #   ctx ██░░░░░░░░ 21% | 5h 30% | 7d 76% | Model·effort | repo:branch
 # Percentages are green under 50, yellow under 80, red from 80.
 # Reads only the JSON Claude Code passes on stdin, and git. Writes nothing.
@@ -21,8 +21,8 @@ mtime() { stat -f %m "$1" 2>/dev/null || stat -c %Y "$1" 2>/dev/null || echo 0; 
 
 # One jq call. Fields are joined on the unit separator (0x1f), not a tab: bash collapses runs of tabs,
 # so an empty field would shift every field after it.
-ctx=""; h5=""; d7=""; model=""; effort=""; cwd=""; wt=""; tp=""
-IFS=$'\037' read -r ctx h5 d7 model effort cwd wt tp < <(
+ctx=""; h5=""; d7=""; model=""; effort=""; cwd=""; wt=""; tp=""; me=""
+IFS=$'\037' read -r ctx h5 d7 model effort cwd wt tp me < <(
   printf '%s' "$input" | jq -r '[
     (.context_window.used_percentage        // ""),
     (.rate_limits.five_hour.used_percentage // ""),
@@ -31,16 +31,44 @@ IFS=$'\037' read -r ctx h5 d7 model effort cwd wt tp < <(
     (.effort.level                          // ""),
     (.workspace.current_dir // .cwd         // ""),
     (.workspace.git_worktree                // ""),
-    (.transcript_path                       // "")
+    (.transcript_path                       // ""),
+    (.session_id                            // "")
   ] | map(tostring | gsub("[\u0000-\u001f]"; " ")) | join("\u001f")' 2>/dev/null
 ) || true
 
 parts=()
 
+# What this session's Runtime runner is doing, when Runtime is installed: the card-runner process this session started
+# (or one running in this session's folder) and the runtime-pipeline runner's own status. With neither, Runtime is idle.
+runner_runs() {
+  local out="" pid env repo st card ev
+  while IFS= read -r pid; do
+    [ -z "$pid" ] && continue
+    env=$(ps eww -o command= -p "$pid" 2>/dev/null)
+    repo=$(printf '%s' "$env" | sed -nE 's#^[^ ]*node( -[^ ]+)* [^ ]*card-runner\.mjs ([^ ]+) .*#\2#p')
+    [ -z "$repo" ] && continue
+    case "$env" in *"CLAUDE_CODE_SESSION_ID=$me"*) ;; *) [ -n "$cwd" ] && [ "$repo" = "$cwd" ] || continue ;; esac
+    out+="${out:+  }card-runner·$(basename "$repo")"
+    st="$HOME/.card-runner/$(basename "$repo").jsonl"
+    if [ -f "$st" ]; then
+      IFS=$'\037' read -r card ev < <(tail -1 "$st" | jq -r '[.card // "", .event // ""] | map(tostring | gsub("[\u0000-\u001f\u007f]"; " ")) | join("\u001f")' 2>/dev/null) || true
+      [ -n "$card" ] && out+="·${card}·${ev}"
+    fi
+  done < <(pgrep -f 'card-runner\.mjs ' 2>/dev/null)
+  local bin; bin=$(ls -d "$HOME"/.claude/plugins/cache/*/runtime-pipeline/*/ 2>/dev/null | sort -V | tail -1)bin/runner
+  if [ -n "$me" ] && [ -x "$bin" ]; then
+    while IFS=$'\037' read -r repo ref stage step min; do
+      [ -z "$ref" ] && continue
+      out+="${out:+  }${ref#*:}·${stage}·${step} ${min}m ${DIM}on${RESET} ${CYAN}$(basename "$repo")${RESET}"
+    done < <("$bin" status --session "$me" ${cwd:+--cwd "$cwd"} --json 2>/dev/null | jq -r '.[] | [.repo, .ref, .stage, .step, (.minutes_in_step|floor|tostring)] | map(tostring | gsub("[\u0000-\u001f\u007f]"; " ")) | join("\u001f")' 2>/dev/null)
+  fi
+  printf '%s' "$out"
+}
+
 # Working or idle. A subagent writes <transcript>/subagents/agent-<id>.jsonl as it works; one written in the
 # last 90 seconds is working. The session itself is working while its transcript was written in the last 20.
 {
-  now=$(date +%s); runs=""; subs=""; nsubs=0
+  now=$(date +%s); runs=$(runner_runs); subs=""; nsubs=0
   if [ -n "$tp" ] && [ -d "${tp%.jsonl}/subagents" ]; then
     for f in "${tp%.jsonl}"/subagents/agent-*.jsonl; do
       [ -f "$f" ] || continue
@@ -50,9 +78,9 @@ parts=()
       subs+="${subs:+, }${desc:-a subagent}"
     done
   fi
-  [ "$nsubs" -gt 0 ] && runs="$([ "$nsubs" -gt 1 ] && echo "$nsubs subagents" || echo subagent): ${subs}"
+  [ "$nsubs" -gt 0 ] && runs+="${runs:+  }$([ "$nsubs" -gt 1 ] && echo "$nsubs subagents" || echo subagent): ${subs}"
   if [ -z "$runs" ] && [ -n "$tp" ] && [ $(( now - $(mtime "$tp") )) -le 20 ]; then runs="this session"; fi
-  if [ -n "$runs" ]; then parts+=("${GREEN}▶ working${RESET} ${runs}"); else parts+=("${DIM}◼ idle${RESET}"); fi
+  if [ -n "$runs" ]; then parts+=("${GREEN}▶ working${RESET} ${runs}"); else parts+=("${DIM}◼ runtime idle${RESET}"); fi
 } 2>/dev/null || true
 
 if [ -n "$ctx" ]; then

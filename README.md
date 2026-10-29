@@ -13,7 +13,7 @@ Then say "run hello-runtime". It prints a line naming your machine.
 
 ## The status line
 
-A two-line status line: whether the session is working, then context, 5-hour and 7-day use, model and effort, and repo:branch. Needs `jq` and `git`.
+A two-line status line: what the Runtime runner is doing (or "runtime idle"), whether the session or its subagents are working, then context, 5-hour and 7-day use, model and effort, and repo:branch. Needs `jq` and `git`.
 
 ```
 /plugin install runtime-statusline@runtime
