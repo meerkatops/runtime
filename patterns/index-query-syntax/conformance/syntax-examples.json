@@ -1,0 +1,827 @@
+{
+  "license": "Apache-2.0",
+  "pattern": "index-query-syntax",
+  "what": "Search syntax parse conformance: each query with the tree it must parse to; each malformed query with the position it must fail at; each out-of-scope query, which the parser must refuse with its listed reason.",
+  "examples": [
+    {
+      "query": "contract",
+      "tree": {
+        "op": "term",
+        "text": "contract"
+      }
+    },
+    {
+      "query": "\"material adverse change\"",
+      "tree": {
+        "op": "phrase",
+        "terms": [
+          "material",
+          "adverse",
+          "change"
+        ]
+      }
+    },
+    {
+      "query": "indemn*",
+      "tree": {
+        "op": "wildcard",
+        "pattern": "indemn*"
+      }
+    },
+    {
+      "query": "organi?ation",
+      "tree": {
+        "op": "wildcard",
+        "pattern": "organi?ation"
+      }
+    },
+    {
+      "query": "run!",
+      "tree": {
+        "op": "term",
+        "text": "run",
+        "root": true
+      }
+    },
+    {
+      "query": "mouse!",
+      "tree": {
+        "op": "term",
+        "text": "mouse",
+        "root": true
+      }
+    },
+    {
+      "query": "83(b)",
+      "tree": {
+        "op": "term",
+        "text": "83(b)"
+      }
+    },
+    {
+      "query": "E&P",
+      "tree": {
+        "op": "term",
+        "text": "E&P"
+      }
+    },
+    {
+      "query": "merger acquisition",
+      "tree": {
+        "op": "ranked",
+        "children": [
+          {
+            "op": "term",
+            "text": "merger"
+          },
+          {
+            "op": "term",
+            "text": "acquisition"
+          }
+        ]
+      }
+    },
+    {
+      "query": "merger AND termination",
+      "tree": {
+        "op": "and",
+        "children": [
+          {
+            "op": "term",
+            "text": "merger"
+          },
+          {
+            "op": "term",
+            "text": "termination"
+          }
+        ]
+      }
+    },
+    {
+      "query": "merger & termination",
+      "tree": {
+        "op": "and",
+        "children": [
+          {
+            "op": "term",
+            "text": "merger"
+          },
+          {
+            "op": "term",
+            "text": "termination"
+          }
+        ]
+      }
+    },
+    {
+      "query": "lease OR rental",
+      "tree": {
+        "op": "or",
+        "children": [
+          {
+            "op": "term",
+            "text": "lease"
+          },
+          {
+            "op": "term",
+            "text": "rental"
+          }
+        ]
+      }
+    },
+    {
+      "query": "lease and rental",
+      "tree": {
+        "op": "ranked",
+        "children": [
+          {
+            "op": "term",
+            "text": "lease"
+          },
+          {
+            "op": "term",
+            "text": "and"
+          },
+          {
+            "op": "term",
+            "text": "rental"
+          }
+        ]
+      }
+    },
+    {
+      "query": "contract NOT draft",
+      "tree": {
+        "op": "and",
+        "children": [
+          {
+            "op": "term",
+            "text": "contract"
+          },
+          {
+            "op": "not",
+            "child": {
+              "op": "term",
+              "text": "draft"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "query": "contract AND NOT draft",
+      "tree": {
+        "op": "and",
+        "children": [
+          {
+            "op": "term",
+            "text": "contract"
+          },
+          {
+            "op": "not",
+            "child": {
+              "op": "term",
+              "text": "draft"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "query": "(NOT draft) OR lease",
+      "tree": {
+        "op": "or",
+        "children": [
+          {
+            "op": "not",
+            "child": {
+              "op": "term",
+              "text": "draft"
+            }
+          },
+          {
+            "op": "term",
+            "text": "lease"
+          }
+        ]
+      }
+    },
+    {
+      "query": "contract % draft",
+      "tree": {
+        "op": "and",
+        "children": [
+          {
+            "op": "term",
+            "text": "contract"
+          },
+          {
+            "op": "not",
+            "child": {
+              "op": "term",
+              "text": "draft"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "query": "(lease OR rental) AND termination",
+      "tree": {
+        "op": "and",
+        "children": [
+          {
+            "op": "or",
+            "children": [
+              {
+                "op": "term",
+                "text": "lease"
+              },
+              {
+                "op": "term",
+                "text": "rental"
+              }
+            ]
+          },
+          {
+            "op": "term",
+            "text": "termination"
+          }
+        ]
+      }
+    },
+    {
+      "query": "notice w/5 termination",
+      "tree": {
+        "op": "near",
+        "unit": "WORDS",
+        "distance_words": 5,
+        "children": [
+          {
+            "op": "term",
+            "text": "notice"
+          },
+          {
+            "op": "term",
+            "text": "termination"
+          }
+        ]
+      }
+    },
+    {
+      "query": "notice /5 termination",
+      "tree": {
+        "op": "near",
+        "unit": "WORDS",
+        "distance_words": 5,
+        "children": [
+          {
+            "op": "term",
+            "text": "notice"
+          },
+          {
+            "op": "term",
+            "text": "termination"
+          }
+        ]
+      }
+    },
+    {
+      "query": "notice NEAR/5 termination",
+      "tree": {
+        "op": "near",
+        "unit": "WORDS",
+        "distance_words": 5,
+        "children": [
+          {
+            "op": "term",
+            "text": "notice"
+          },
+          {
+            "op": "term",
+            "text": "termination"
+          }
+        ]
+      }
+    },
+    {
+      "query": "fire NEAR suppression",
+      "tree": {
+        "op": "near",
+        "unit": "WORDS",
+        "distance_words": 8,
+        "children": [
+          {
+            "op": "term",
+            "text": "fire"
+          },
+          {
+            "op": "term",
+            "text": "suppression"
+          }
+        ]
+      }
+    },
+    {
+      "query": "force PRE/3 majeure",
+      "tree": {
+        "op": "near",
+        "unit": "WORDS",
+        "distance_words": 3,
+        "ordered": true,
+        "children": [
+          {
+            "op": "term",
+            "text": "force"
+          },
+          {
+            "op": "term",
+            "text": "majeure"
+          }
+        ]
+      }
+    },
+    {
+      "query": "force w/3 majeure",
+      "tree": {
+        "op": "near",
+        "unit": "WORDS",
+        "distance_words": 3,
+        "children": [
+          {
+            "op": "term",
+            "text": "force"
+          },
+          {
+            "op": "term",
+            "text": "majeure"
+          }
+        ]
+      }
+    },
+    {
+      "query": "indemnify /s negligence",
+      "tree": {
+        "op": "near",
+        "unit": "SENTENCE",
+        "children": [
+          {
+            "op": "term",
+            "text": "indemnify"
+          },
+          {
+            "op": "term",
+            "text": "negligence"
+          }
+        ]
+      }
+    },
+    {
+      "query": "indemnify w/s negligence",
+      "tree": {
+        "op": "near",
+        "unit": "SENTENCE",
+        "children": [
+          {
+            "op": "term",
+            "text": "indemnify"
+          },
+          {
+            "op": "term",
+            "text": "negligence"
+          }
+        ]
+      }
+    },
+    {
+      "query": "warranty /p disclaimer",
+      "tree": {
+        "op": "near",
+        "unit": "PARAGRAPH",
+        "children": [
+          {
+            "op": "term",
+            "text": "warranty"
+          },
+          {
+            "op": "term",
+            "text": "disclaimer"
+          }
+        ]
+      }
+    },
+    {
+      "query": "warranty w/p disclaimer",
+      "tree": {
+        "op": "near",
+        "unit": "PARAGRAPH",
+        "children": [
+          {
+            "op": "term",
+            "text": "warranty"
+          },
+          {
+            "op": "term",
+            "text": "disclaimer"
+          }
+        ]
+      }
+    },
+    {
+      "query": "footnote:\"safe harbor\"",
+      "tree": {
+        "op": "phrase",
+        "terms": [
+          "safe",
+          "harbor"
+        ],
+        "zone": "footnote"
+      }
+    },
+    {
+      "query": "header:indemn*",
+      "tree": {
+        "op": "wildcard",
+        "pattern": "indemn*",
+        "zone": "header"
+      }
+    },
+    {
+      "query": "name:contract.pdf",
+      "tree": {
+        "op": "field",
+        "field": "name",
+        "child": {
+          "op": "term",
+          "text": "contract.pdf"
+        }
+      }
+    },
+    {
+      "query": "REGEX(\"[0-9]{3}-[0-9]{4}\")",
+      "tree": {
+        "op": "regex",
+        "pattern": "[0-9]{3}-[0-9]{4}"
+      }
+    },
+    {
+      "query": "TOPIC(\"water supply\") AND hydrant",
+      "tree": {
+        "op": "and",
+        "children": [
+          {
+            "op": "topic",
+            "text": "water supply"
+          },
+          {
+            "op": "term",
+            "text": "hydrant"
+          }
+        ]
+      }
+    },
+    {
+      "query": "NOT notice /5 termination",
+      "tree": {
+        "op": "not",
+        "child": {
+          "op": "near",
+          "unit": "WORDS",
+          "distance_words": 5,
+          "children": [
+            {
+              "op": "term",
+              "text": "notice"
+            },
+            {
+              "op": "term",
+              "text": "termination"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "query": "breach /s default BUT NOT cured",
+      "tree": {
+        "op": "butnot",
+        "include": {
+          "op": "near",
+          "unit": "SENTENCE",
+          "children": [
+            {
+              "op": "term",
+              "text": "breach"
+            },
+            {
+              "op": "term",
+              "text": "default"
+            }
+          ]
+        },
+        "exclude": {
+          "op": "term",
+          "text": "cured"
+        }
+      }
+    },
+    {
+      "query": "§ 1031",
+      "tree": {
+        "op": "term",
+        "text": "§ 1031"
+      }
+    },
+    {
+      "query": "from:counsel",
+      "tree": {
+        "op": "field",
+        "field": "from",
+        "child": {
+          "op": "term",
+          "text": "counsel"
+        }
+      }
+    },
+    {
+      "query": "subject:(renewal OR extension)",
+      "tree": {
+        "op": "field",
+        "field": "subject",
+        "child": {
+          "op": "or",
+          "children": [
+            {
+              "op": "term",
+              "text": "renewal"
+            },
+            {
+              "op": "term",
+              "text": "extension"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "query": "subject~:recieve",
+      "tree": {
+        "op": "field",
+        "field": "subject",
+        "fuzzy": true,
+        "child": {
+          "op": "term",
+          "text": "recieve"
+        }
+      }
+    },
+    {
+      "query": "subject:[EXTERNAL]",
+      "tree": {
+        "op": "field",
+        "field": "subject",
+        "child": {
+          "op": "term",
+          "text": "[EXTERNAL]"
+        }
+      }
+    },
+    {
+      "query": "modified:[2025-01-01 TO 2025-06-30]",
+      "tree": {
+        "op": "range",
+        "field": "modified",
+        "gte": "2025-01-01",
+        "lte": "2025-06-30"
+      }
+    },
+    {
+      "query": "size:>10mb",
+      "tree": {
+        "op": "range",
+        "field": "size",
+        "gt": "10mb"
+      }
+    },
+    {
+      "query": "created:>=2024-01-01",
+      "tree": {
+        "op": "range",
+        "field": "created",
+        "gte": "2024-01-01"
+      }
+    },
+    {
+      "query": "from: IN(counsel, partner, \"outside counsel\")",
+      "tree": {
+        "op": "in",
+        "field": "from",
+        "values": [
+          "counsel",
+          "partner",
+          "outside counsel"
+        ]
+      }
+    },
+    {
+      "query": "type:email has:attachments",
+      "tree": {
+        "op": "and",
+        "children": [
+          {
+            "op": "field",
+            "field": "type",
+            "child": {
+              "op": "term",
+              "text": "email"
+            }
+          },
+          {
+            "op": "flag",
+            "name": "has",
+            "value": "attachments"
+          }
+        ]
+      }
+    },
+    {
+      "query": "tags:privileged",
+      "tree": {
+        "op": "field",
+        "field": "tags",
+        "child": {
+          "op": "term",
+          "text": "privileged"
+        }
+      }
+    },
+    {
+      "query": "library.tag:closing",
+      "tree": {
+        "op": "field",
+        "field": "library.tag",
+        "child": {
+          "op": "term",
+          "text": "closing"
+        }
+      }
+    },
+    {
+      "query": "subject MATCHES /INV-[0-9]+/",
+      "tree": {
+        "op": "regex",
+        "field": "subject",
+        "pattern": "INV-[0-9]+"
+      }
+    },
+    {
+      "query": "tags:\"follow up\"",
+      "tree": {
+        "op": "field",
+        "field": "tags",
+        "child": {
+          "op": "phrase",
+          "terms": [
+            "follow",
+            "up"
+          ]
+        }
+      }
+    },
+    {
+      "query": "contract from:counsel",
+      "tree": {
+        "op": "and",
+        "children": [
+          {
+            "op": "term",
+            "text": "contract"
+          },
+          {
+            "op": "field",
+            "field": "from",
+            "child": {
+              "op": "term",
+              "text": "counsel"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "query": "a /5 b /3 c",
+      "tree": {
+        "op": "near",
+        "unit": "WORDS",
+        "distance_words": 3,
+        "children": [
+          {
+            "op": "near",
+            "unit": "WORDS",
+            "distance_words": 5,
+            "children": [
+              {
+                "op": "term",
+                "text": "a"
+              },
+              {
+                "op": "term",
+                "text": "b"
+              }
+            ]
+          },
+          {
+            "op": "term",
+            "text": "c"
+          }
+        ]
+      }
+    }
+  ],
+  "malformed": [
+    {
+      "query": "\"safe harbor",
+      "position": 0,
+      "reason": "unbalanced quote"
+    },
+    {
+      "query": "(lease OR rental",
+      "position": 0,
+      "reason": "unbalanced open paren"
+    },
+    {
+      "query": "lease OR rental)",
+      "position": 15,
+      "reason": "unbalanced close paren"
+    },
+    {
+      "query": "lease OR",
+      "position": 6,
+      "reason": "dangling operator"
+    },
+    {
+      "query": "AND merger",
+      "position": 0,
+      "reason": "dangling operator"
+    },
+    {
+      "query": "notice /0 termination",
+      "position": 7,
+      "reason": "/0 is not a distance"
+    },
+    {
+      "query": "force PRE/ majeure",
+      "position": 6,
+      "reason": "PRE/ needs a number"
+    },
+    {
+      "query": "margin:term",
+      "position": 0,
+      "reason": "unknown zone"
+    },
+    {
+      "query": "REGEX(\"[0-9\")",
+      "position": 7,
+      "reason": "unbalanced bracket in pattern"
+    },
+    {
+      "query": "tenant_id:abc",
+      "position": 0,
+      "reason": "access fields cannot be searched"
+    },
+    {
+      "query": "from: IN(counsel, partner",
+      "position": 6,
+      "reason": "unbalanced IN list"
+    },
+    {
+      "query": "subject MATCHES INV",
+      "position": 8,
+      "reason": "MATCHES needs /pattern/"
+    },
+    {
+      "query": "merger acquisition AND termination",
+      "position": 7,
+      "reason": "bare adjacency beside an operator; write AND or OR"
+    },
+    {
+      "query": "indemn!",
+      "position": 0,
+      "reason": "no word forms for this word in the licensed list"
+    }
+  ],
+  "outOfScope": [
+    {
+      "query": "recieve~",
+      "reason": "fuzzy is written on a field, as subject~:recieve"
+    },
+    {
+      "query": "comments:term",
+      "reason": "the section is named comment, not comments"
+    },
+    {
+      "query": "*",
+      "reason": "every item in scope is the absence of a tree"
+    }
+  ]
+}

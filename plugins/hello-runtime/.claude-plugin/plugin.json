@@ -1,0 +1,8 @@
+{
+  "name": "hello-runtime",
+  "displayName": "Hello Runtime",
+  "version": "0.1.0",
+  "description": "A test plugin: proves a Runtime skill loads and its bundled script runs on this machine",
+  "author": { "name": "Evan Jennings" },
+  "license": "Apache-2.0"
+}
