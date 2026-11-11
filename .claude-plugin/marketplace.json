@@ -18,7 +18,7 @@
     {
       "name": "runtime-engineering",
       "source": "./plugins/runtime-engineering",
-      "description": "Rust, TypeScript and Python engineer and reviewer agents, the coding rulebook they are held to, and ground skills whose facts cite first-party sources"
+      "description": "Rust, TypeScript, Python and React engineer and reviewer agents, the coding rulebook they are held to, and ground skills whose facts cite first-party sources"
     }
   ]
 }
