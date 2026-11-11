@@ -1,0 +1,8 @@
+{
+  "name": "runtime-engineering",
+  "displayName": "Runtime engineering",
+  "version": "0.1.0",
+  "description": "Rust, TypeScript, Python and React engineer and reviewer agents, the coding rulebook they are held to, and ground skills whose facts cite first-party sources",
+  "author": { "name": "Evan Jennings" },
+  "license": "Apache-2.0"
+}

@@ -21,6 +21,16 @@ A two-line status line: what the Runtime runner is doing (or "runtime idle"), wh
 
 Then say "install the status line", or run its `scripts/install.sh`. The status line always runs the newest installed copy, so `claude plugin update runtime-statusline@runtime` is all an update needs.
 
+## Engineering
+
+Engineer and reviewer agents for Rust, TypeScript, Python and React, the coding rulebook they are held to (rules with ids), and five ground skills (Rust, TypeScript, Python, React, Parquet) whose facts cite first-party sources. An engineer writes with a checker in the loop: after each edit a hook runs `cargo check`, `tsc`, or `ruff` and the type checker, and hands the errors back. A reviewer judges a change against the rulebook and the ground skill. macOS and Linux.
+
+```
+/plugin install runtime-engineering@runtime
+```
+
+Then say "use the rust-engineer agent to ...", or run `/runtime-engineering:coding-rulebook`. The hooks check nothing until you list your repo in `~/.config/engineer-agents/trusted-roots`; see the plugin's [README](plugins/runtime-engineering/README.md) for that and for what each hook needs.
+
 ## Patterns
 
 [patterns/](patterns/README.md) holds 45 design patterns for building document intake, indexing, search and review: each one the problem, the rules with their reasons, the operations it provides and the cases every build must pass. Version 1.0.0.

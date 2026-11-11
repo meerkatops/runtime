@@ -14,6 +14,11 @@
       "name": "runtime-statusline",
       "source": "./plugins/runtime-statusline",
       "description": "A two-line status line: working or idle, then context, 5-hour and 7-day use, model and effort, repo:branch"
+    },
+    {
+      "name": "runtime-engineering",
+      "source": "./plugins/runtime-engineering",
+      "description": "Rust, TypeScript and Python engineer and reviewer agents, the coding rulebook they are held to, and ground skills whose facts cite first-party sources"
     }
   ]
 }

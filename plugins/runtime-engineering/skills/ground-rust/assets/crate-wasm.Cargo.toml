@@ -1,0 +1,17 @@
+[package]
+name = "name-wasm"
+description = "The browser face of name-core."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+name-core = { workspace = true, default-features = false }
+wasm-bindgen.workspace = true
+
+[lints]
+workspace = true

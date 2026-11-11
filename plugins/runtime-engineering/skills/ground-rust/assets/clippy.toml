@@ -1,0 +1,11 @@
+too-many-lines-threshold = 60
+excessive-nesting-threshold = 4
+too-many-arguments-threshold = 7
+# Test code may panic, index and print (the no-panic lints bind library code). Helpers in tests/common/ are not
+# covered by these and carry one #![allow] each.
+allow-unwrap-in-tests = true
+allow-expect-in-tests = true
+allow-indexing-slicing-in-tests = true
+allow-panic-in-tests = true
+allow-print-in-tests = true
+allow-dbg-in-tests = true

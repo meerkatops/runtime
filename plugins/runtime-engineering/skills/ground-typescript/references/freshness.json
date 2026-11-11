@@ -1,0 +1,41 @@
+{
+ "about": "Each fact this skill states in its own words, with the page that states it and a phrase that page must still carry. No checker ships with this skill: re-check each by hand against its page; when one fails, re-read the page and correct the skill and this line together.",
+ "watch": [
+  {
+   "what": "strict is on by default in TypeScript 6.0",
+   "url": "https://www.typescriptlang.org/docs/handbook/release-notes/typescript-6-0.html",
+   "pattern": "strict",
+   "value": "strict"
+  },
+  {
+   "what": "Node strips types by default and refuses non-erasable syntax",
+   "url": "https://nodejs.org/docs/latest-v24.x/api/typescript.md",
+   "pattern": "ERR_UNSUPPORTED_TYPESCRIPT_SYNTAX",
+   "value": "ERR_UNSUPPORTED_TYPESCRIPT_SYNTAX"
+  },
+  {
+   "what": "the test runner matches *.test.ts files",
+   "url": "https://nodejs.org/docs/latest-v24.x/api/test.md",
+   "pattern": "\\.test\\.",
+   "value": ".test."
+  },
+  {
+   "what": "errors are identified by code, not message",
+   "url": "https://nodejs.org/docs/latest-v24.x/api/errors.md",
+   "pattern": "error\\.code",
+   "value": "error.code"
+  },
+  {
+   "what": "typescript-eslint supports TypeScript below 6.1.0, which holds the starting package.json on TypeScript 6.0",
+   "url": "https://typescript-eslint.io/users/dependency-versions/",
+   "pattern": ">=4.8.4 <6.1.0",
+   "value": ">=4.8.4 <6.1.0"
+  },
+  {
+   "what": "strict-type-checked is not stable under semver, so typescript-eslint is pinned exactly",
+   "url": "https://typescript-eslint.io/users/configs/",
+   "pattern": "may change outside of major version updates",
+   "value": "may change outside of major version updates"
+  }
+ ]
+}

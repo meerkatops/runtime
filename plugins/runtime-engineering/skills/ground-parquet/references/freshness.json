@@ -1,0 +1,125 @@
+{
+ "about": "Each fact this skill states in its own words, with the page that states it and a phrase that page must still carry. No checker ships with this skill: re-check each by hand against its page; when one fails, re-read the page and correct the skill and this line together.",
+ "watch": [
+  {
+   "what": "INT96 is deprecated and used only by legacy implementations",
+   "url": "https://parquet.apache.org/docs/file-format/types/",
+   "pattern": "deprecated; only used by legacy implementations",
+   "value": "deprecated; only used by legacy implementations"
+  },
+  {
+   "what": "the format's own page recommends 512 MB to 1 GB row groups",
+   "url": "https://parquet.apache.org/docs/file-format/configurations/",
+   "pattern": "512MB - 1GB",
+   "value": "512MB - 1GB"
+  },
+  {
+   "what": "the LZ4 codec is deprecated in favor of LZ4_RAW",
+   "url": "https://parquet.apache.org/docs/file-format/data-pages/compression/",
+   "pattern": "switch to the newer, interoperable",
+   "value": "switch to the newer, interoperable"
+  },
+  {
+   "what": "a file is lost if its file metadata is corrupt",
+   "url": "https://parquet.apache.org/docs/file-format/data-pages/errorrecovery/",
+   "pattern": "If the file metadata is corrupt, the file is lost",
+   "value": "If the file metadata is corrupt, the file is lost"
+  },
+  {
+   "what": "an INT64 nanosecond timestamp starts at 1677-09-21",
+   "url": "https://raw.githubusercontent.com/apache/parquet-format/master/LogicalTypes.md",
+   "pattern": "1677-09-21",
+   "value": "1677-09-21"
+  },
+  {
+   "what": "a dictionary that grows too big falls back to plain encoding",
+   "url": "https://raw.githubusercontent.com/apache/parquet-format/master/Encodings.md",
+   "pattern": "fall back to the plain encoding",
+   "value": "fall back to the plain encoding"
+  },
+  {
+   "what": "an encrypted footer ends the file with the magic string PARE",
+   "url": "https://raw.githubusercontent.com/apache/parquet-format/master/Encryption.md",
+   "pattern": "\"PARE\"",
+   "value": "\"PARE\""
+  },
+  {
+   "what": "the Rust parquet crate version the writer defaults were read at",
+   "url": "https://docs.rs/parquet/latest/parquet/",
+   "pattern": "parquet (\\d+\\.\\d+\\.\\d+)",
+   "value": "60.1.0"
+  },
+  {
+   "what": "the Rust writers default to no block compression",
+   "url": "https://docs.rs/parquet/latest/parquet/basic/enum.Compression.html",
+   "pattern": "default to no block compression",
+   "value": "default to no block compression"
+  },
+  {
+   "what": "PyArrow compresses with Snappy by default",
+   "url": "https://arrow.apache.org/docs/python/parquet/parquet.html",
+   "pattern": "(Snappy)\\s+compression by default",
+   "value": "Snappy"
+  },
+  {
+   "what": "DataFusion writes zstd level 3 by default",
+   "url": "https://datafusion.apache.org/user-guide/configs.html",
+   "pattern": "zstd\\(3\\)",
+   "value": "zstd(3)"
+  },
+  {
+   "what": "DuckDB's default row group is 122,880 rows (URL pinned to 2.0: the stable path forwards in the browser only; move it when the version moves)",
+   "url": "https://duckdb.org/docs/2.0/data/parquet/tips.html",
+   "pattern": "default of 122,880",
+   "value": "default of 122,880"
+  },
+  {
+   "what": "DuckDB's ideal file size is 100 MB to 10 GB (URL pinned to 2.0, as above)",
+   "url": "https://duckdb.org/docs/2.0/guides/performance/file_formats.html",
+   "pattern": "between 100 MB and 10 GB",
+   "value": "between 100 MB and 10 GB"
+  },
+  {
+   "what": "the latest GeoParquet release",
+   "url": "https://geoparquet.org/releases/",
+   "pattern": "\\./v(\\d+\\.\\d+\\.\\d+)/",
+   "value": "2.0.0"
+  },
+  {
+   "what": "the .geoparquet file extension should not be used",
+   "url": "https://raw.githubusercontent.com/opengeospatial/geoparquet/main/format-specs/geoparquet.md",
+   "pattern": "`\\.geoparquet` SHOULD NOT be used",
+   "value": "`.geoparquet` SHOULD NOT be used"
+  },
+  {
+   "what": "GDAL's Parquet driver supports GeoParquet 1.1.0 since GDAL 3.9.0",
+   "url": "https://gdal.org/en/stable/drivers/vector/parquet.html",
+   "pattern": "GeoParquet 1\\.1\\.0 specification is supported since GDAL (\\d+\\.\\d+\\.\\d+)",
+   "value": "3.9.0"
+  },
+  {
+   "what": "BigQuery asks for row groups of at least 16 MiB",
+   "url": "https://cloud.google.com/bigquery/docs/loading-data-cloud-storage-parquet",
+   "pattern": "at least 16 MiB",
+   "value": "at least 16 MiB"
+  },
+  {
+   "what": "Cloud Storage objects are immutable",
+   "url": "https://cloud.google.com/storage/docs/objects",
+   "pattern": "Objects are immutable",
+   "value": "Objects are immutable"
+  },
+  {
+   "what": "the Iceberg specification names Parquet an immutable file format",
+   "url": "https://iceberg.apache.org/spec/",
+   "pattern": "immutable file formats: Parquet, Avro, and ORC",
+   "value": "immutable file formats: Parquet, Avro, and ORC"
+  },
+  {
+   "what": "hyparquet decompresses only Snappy without its add-on",
+   "url": "https://raw.githubusercontent.com/hyparam/hyparquet/master/README.md",
+   "pattern": "supports uncompressed and snappy-compressed parquet files",
+   "value": "supports uncompressed and snappy-compressed parquet files"
+  }
+ ]
+}
