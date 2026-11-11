@@ -1,0 +1,84 @@
+{
+  "profile": "service",
+  "layers": {
+    "root": ["app", "adapters", "lib", "core"],
+    "app": ["app", "core"],
+    "adapters": ["adapters", "core", "lib"],
+    "core": ["core", "lib"],
+    "lib": []
+  },
+  "root": "crates/<product>/src/lib.rs",
+  "entries": ["crates/<product>/src/main.rs"],
+  "modules": [
+    {
+      "glob": "crates/<product>-core/src/model**",
+      "face": "crates/<product>-core/src/model.rs",
+      "layer": "core",
+      "language": "rust",
+      "purpose": "The facts the product moves, with no I/O."
+    },
+    {
+      "glob": "crates/<product>-core/src/ports**",
+      "face": "crates/<product>-core/src/ports.rs",
+      "layer": "core",
+      "language": "rust",
+      "purpose": "The traits the product reaches the outside through, and their fakes for tests."
+    },
+    {
+      "glob": "crates/<product>-adapters/src/<port>**",
+      "face": "crates/<product>-adapters/src/<port>.rs",
+      "layer": "adapters",
+      "language": "rust",
+      "purpose": "<port>'s real implementation."
+    },
+    {
+      "glob": "crates/<product>-app/src/<job>**",
+      "face": "crates/<product>-app/src/<job>.rs",
+      "layer": "app",
+      "language": "rust",
+      "purpose": "<job>: one use case, written against ports only."
+    },
+    {
+      "glob": "crates/lib-<capability>/**",
+      "face": "crates/lib-<capability>/src/lib.rs",
+      "layer": "lib",
+      "language": "rust",
+      "purpose": "<capability>, shared, with its own error type and no product types; it depends on another lib crate only by an edge listed in ci/check-lib-imports.sh's allowed line."
+    },
+    {
+      "glob": "crates/<product>/src/compose**",
+      "face": "crates/<product>/src/compose.rs",
+      "layer": "root",
+      "language": "rust",
+      "purpose": "Config, the only reader of the environment, and the adapters wired once, one file per adapter group."
+    },
+    {
+      "glob": "crates/<product>/src/verbs**",
+      "face": "crates/<product>/src/verbs.rs",
+      "layer": "root",
+      "language": "rust",
+      "purpose": "The verb registry: one file per command, each turning its typed answer into a reply."
+    },
+    {
+      "glob": "crates/<product>/src/answer**",
+      "face": "crates/<product>/src/answer.rs",
+      "layer": "root",
+      "language": "rust",
+      "purpose": "The one writer: JSON on stdout, text on stderr, every failure with its exit code."
+    },
+    {
+      "glob": "crates/<product>/src/crash**",
+      "face": "crates/<product>/src/crash.rs",
+      "layer": "root",
+      "language": "rust",
+      "purpose": "The crash record a panic leaves as a JSON file, its hook installed first in main; stderr keeps the default panic message."
+    }
+  ],
+  "ignored": [
+    { "glob": "ci/**", "why": "Build, packaging and proof scripts, not product code." },
+    { "glob": ".github/**", "why": "CI workflow and Dependabot settings, not product code." },
+    { "glob": "catalog/**", "why": "The shared homes list, not product code." },
+    { "glob": "crates/*/src/lib.rs", "why": "Crate roots: only mod and pub use lines; each module they expose is mapped above." },
+    { "glob": "crates/*/tests/**", "why": "Integration tests and their fixtures; each tests the module its name says." }
+  ]
+}

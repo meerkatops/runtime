@@ -1,0 +1,35 @@
+/* The one theme source. Every color, space, radius and font the app uses is named here,
+   and this is the only file that may hold a color literal (tools/check-tokens.mjs).
+   app/theme.ts hands each one to Material UI. Light is the default; dark follows the
+   operating system setting. */
+:root {
+  color-scheme: light dark;
+
+  --color-bg: #ffffff;
+  --color-surface: #f5f6f8;
+  --color-text: #16181d;
+  --color-text-muted: #4a5160;
+  --color-border: #c9ced8;
+  --color-primary: #1f5fbf;
+  --color-danger: #b3261e;
+
+  /* One step of space: `spacing={3}` and `sx={{ py: 3 }}` are three of these. */
+  --space-unit: 0.5rem;
+
+  /* One step of corner radius: `sx={{ borderRadius: 2 }}` is two of these. */
+  --radius-unit: 0.5rem;
+
+  --font-body: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg: #111318;
+    --color-surface: #1b1e25;
+    --color-text: #eceef2;
+    --color-text-muted: #aab1bf;
+    --color-border: #3a404c;
+    --color-primary: #8ab4f8;
+    --color-danger: #f2b8b5;
+  }
+}

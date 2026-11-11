@@ -1,0 +1,30 @@
+{
+  "description": "After each edit or command in a typescript-engineer, react-engineer, rust-engineer or python-engineer agent, engineers/hooks runs tsc, cargo check, or ruff and the type checker on what changed and hands the errors back as information; each keeps to its own agent and never blocks. Nothing is checked until the repo is listed in ~/.config/engineer-agents/trusted-roots.",
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/engineers/hooks/ts-engineer.py\" --agent typescript-engineer --agent react-engineer",
+            "timeout": 330,
+            "statusMessage": "tsc --noEmit"
+          },
+          {
+            "type": "command",
+            "command": "sh \"${CLAUDE_PLUGIN_ROOT}/engineers/hooks/cargo-check.sh\" --agent rust-engineer",
+            "timeout": 600,
+            "statusMessage": "cargo check"
+          },
+          {
+            "type": "command",
+            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/engineers/hooks/py-engineer.py\" --agent python-engineer",
+            "timeout": 330,
+            "statusMessage": "ruff and pyright"
+          }
+        ]
+      }
+    ]
+  }
+}

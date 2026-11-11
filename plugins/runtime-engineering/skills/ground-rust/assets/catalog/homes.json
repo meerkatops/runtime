@@ -1,0 +1,165 @@
+{
+  "schema": 2,
+  "about": "One home per shared piece of <product>; a second copy is a review finding, and so is a second home in another repo.",
+  "homes": [
+    {
+      "id": "time.clock",
+      "name": "Clock",
+      "does": "read the wall or monotonic time",
+      "face": [
+        "Clock"
+      ],
+      "status": "planned",
+      "lives": {
+        "repo": "<org>/<product>",
+        "path": "crates/<product>-core/src/ports.rs"
+      },
+      "used_by": [],
+      "kind": "trait",
+      "home": "crates/<product>-core/src/ports.rs#Clock",
+      "first": "<task>",
+      "use": "take a &dyn Clock (the system clock in compose, FixedClock in tests) and ask it",
+      "bypass": [
+        "Timestamp::now\\(",
+        "SystemTime::now\\("
+      ],
+      "files": "\\.rs$",
+      "allow": [
+        "crates/<product>-adapters/src/clock.rs",
+        "crates/<product>/src/crash.rs"
+      ],
+      "allow_why": {
+        "crates/<product>-adapters/src/clock.rs": "the one adapter that reads the OS clock",
+        "crates/<product>/src/crash.rs": "the panic hook runs with nothing wired"
+      },
+      "bad": "let t = jiff::Timestamp::now();",
+      "planned": true
+    },
+    {
+      "id": "env.config",
+      "name": "read_config",
+      "does": "read the environment",
+      "face": [
+        "read_config"
+      ],
+      "status": "planned",
+      "lives": {
+        "repo": "<org>/<product>",
+        "path": "crates/<product>/src/compose.rs"
+      },
+      "used_by": [],
+      "kind": "function",
+      "home": "crates/<product>/src/compose.rs#read_config",
+      "first": "<task>",
+      "use": "take the value from Config, which compose reads once and hands to adapters as values",
+      "bypass": [
+        "env::var\\(",
+        "env::var_os\\(",
+        "env::vars\\(",
+        "env::vars_os\\("
+      ],
+      "files": "\\.rs$",
+      "allow": [
+        "crates/<product>/src/crash.rs"
+      ],
+      "allow_why": {
+        "crates/<product>/src/crash.rs": "the panic hook runs with nothing wired: it reads HOME for the crashes folder and the names, never the values, of the variables"
+      },
+      "except": [
+        {
+          "file": "crates/<product>-adapters/tests/common/mod.rs",
+          "match": "std::env::var_os\\(\"PATH\"\\)",
+          "why": "find_on_path reads the test run's own PATH to find a real tool or skip"
+        }
+      ],
+      "bad": "let home = std::env::var(\"HOME\");",
+      "planned": true
+    },
+    {
+      "id": "terminal.answer",
+      "name": "write",
+      "does": "write an answer or a failure to the terminal",
+      "face": [
+        "write"
+      ],
+      "status": "planned",
+      "lives": {
+        "repo": "<org>/<product>",
+        "path": "crates/<product>/src/answer.rs"
+      },
+      "used_by": [],
+      "kind": "function",
+      "home": "crates/<product>/src/answer.rs#write",
+      "first": "<task>",
+      "use": "return a Reply or a Failure; answer.rs writes it",
+      "bypass": [
+        "io::stdout\\(",
+        "io::stderr\\("
+      ],
+      "files": "\\.rs$",
+      "allow": [
+        "crates/<product>/src/crash.rs"
+      ],
+      "allow_why": {
+        "crates/<product>/src/crash.rs": "the panic hook writes with plain std::io::stderr(), never through a writer that may be the one panicking"
+      },
+      "bad": "let _ = writeln!(std::io::stdout(), \"{x}\");",
+      "planned": true
+    },
+    {
+      "id": "process.child",
+      "name": "Sandbox",
+      "does": "run a child process",
+      "face": [
+        "Sandbox"
+      ],
+      "status": "planned",
+      "lives": {
+        "repo": "<org>/<product>",
+        "path": "crates/<product>-adapters/src/process.rs"
+      },
+      "used_by": [],
+      "kind": "struct",
+      "home": "crates/<product>-adapters/src/process.rs#Sandbox",
+      "first": "<task>",
+      "use": "take a &dyn Sandbox: no shell, env built from nothing, limits, a guard that owns the process group",
+      "bypass": [
+        "Command::new\\("
+      ],
+      "files": "\\.rs$",
+      "except": [
+        {
+          "file": "crates/<product>-adapters/tests/common/mod.rs",
+          "match": "Command::new\\(\"git\"\\)",
+          "why": "a fixture builds repos with git's own binary"
+        }
+      ],
+      "bad": "let out = std::process::Command::new(\"npm\").output();",
+      "planned": true
+    },
+    {
+      "id": "crash.hook",
+      "name": "install_crash_hook",
+      "does": "record a panic",
+      "face": [
+        "install_crash_hook"
+      ],
+      "status": "planned",
+      "lives": {
+        "repo": "<org>/<product>",
+        "path": "crates/<product>/src/crash.rs"
+      },
+      "used_by": [],
+      "kind": "function",
+      "home": "crates/<product>/src/crash.rs#install_crash_hook",
+      "first": "<task>",
+      "use": "main's first statement installs it; nothing else sets a panic hook",
+      "bypass": [
+        "set_hook\\("
+      ],
+      "files": "\\.rs$",
+      "bad": "std::panic::set_hook(Box::new(|_| {}));",
+      "planned": true
+    }
+  ]
+}

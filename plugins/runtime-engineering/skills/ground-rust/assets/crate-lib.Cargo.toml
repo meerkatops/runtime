@@ -1,0 +1,18 @@
+[package]
+name = "name-core"
+description = "One line saying what it computes."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+
+[lib]
+
+[features]
+default = ["std"]
+std = []
+
+[dependencies]
+
+[lints]
+workspace = true

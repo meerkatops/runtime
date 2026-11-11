@@ -1,0 +1,145 @@
+{
+ "about": "Each fact this skill states in its own words, with the page that states it and a phrase that page must still carry. No checker ships with this skill: re-check each by hand against its page; when one fails, re-read the page and correct the skill and this line together.",
+ "facts": [
+  {
+   "claim": "the module boundary is the only bullet-proof scope for unsafe",
+   "url": "https://doc.rust-lang.org/nomicon/working-with-unsafe.html",
+   "phrase": "module boundary"
+  },
+  {
+   "claim": "forbid cannot be overridden below",
+   "url": "https://doc.rust-lang.org/rustc/lints/levels.html",
+   "phrase": "forbid"
+  },
+  {
+   "claim": "set_var is unsafe in edition 2024",
+   "url": "https://doc.rust-lang.org/edition-guide/rust-2024/newly-unsafe-functions.html",
+   "phrase": "set_var"
+  },
+  {
+   "claim": "Miri runs no FFI by default; its native-lib flag is experimental and this standard does not rely on it",
+   "url": "https://github.com/rust-lang/miri",
+   "phrase": "FFI"
+  },
+  {
+   "claim": "cargo-fuzz needs nightly",
+   "url": "https://rust-fuzz.github.io/book/cargo-fuzz/setup.html",
+   "phrase": "nightly"
+  },
+  {
+   "claim": "arch intrinsics are unsafe unless the target feature is enabled",
+   "url": "https://doc.rust-lang.org/std/arch/index.html",
+   "phrase": "target_feature"
+  },
+  {
+   "claim": "#[bench] is nightly and harness can be turned off",
+   "url": "https://doc.rust-lang.org/cargo/commands/cargo-bench.html",
+   "phrase": "harness"
+  },
+  {
+   "claim": "the bench profile inherits release",
+   "url": "https://doc.rust-lang.org/cargo/reference/profiles.html",
+   "phrase": "profile.bench"
+  },
+  {
+   "claim": "a map over a file modified underneath is undefined behavior",
+   "url": "https://docs.rs/memmap2/latest/memmap2/struct.Mmap.html",
+   "phrase": "unsafe"
+  },
+  {
+   "claim": "one global allocator",
+   "url": "https://doc.rust-lang.org/std/alloc/index.html",
+   "phrase": "global_allocator"
+  },
+  {
+   "claim": "the perf book names the profilers",
+   "url": "https://nnethercote.github.io/perf-book/profiling.html",
+   "phrase": "perf"
+  },
+  {
+   "claim": "criterion says not to rely on benchmark results in CI",
+   "url": "https://bheisler.github.io/criterion.rs/book/faq.html",
+   "phrase": "don't rely on the results"
+  },
+  {
+   "claim": "calling a function compiled with an unsupported target feature is undefined behavior",
+   "url": "https://doc.rust-lang.org/reference/attributes/codegen.html",
+   "phrase": "undefined behavior to call a function"
+  },
+  {
+   "claim": "no_std swaps the std prelude for core",
+   "url": "https://doc.rust-lang.org/reference/names/preludes.html",
+   "phrase": "no_std"
+  },
+  {
+   "claim": "overflow checks are a profile setting a package can override",
+   "url": "https://doc.rust-lang.org/cargo/reference/profiles.html",
+   "phrase": "overflow-checks"
+  },
+  {
+   "claim": "memchr loses run-time CPU detection without std",
+   "url": "https://raw.githubusercontent.com/BurntSushi/memchr/master/Cargo.toml",
+   "phrase": "automatic detection is not possible"
+  },
+  {
+   "claim": "simdutf8 disables run-time selection under target-cpu=native",
+   "url": "https://raw.githubusercontent.com/rusticstuff/simdutf8/main/README.md",
+   "phrase": "runtime selection is disabled"
+  },
+  {
+   "claim": "tokio pins its Miri nightly by date",
+   "url": "https://raw.githubusercontent.com/tokio-rs/tokio/master/.github/workflows/ci.yml",
+   "phrase": "rust_miri_nightly"
+  }
+ ],
+ "watch": [
+  {
+   "what": "a virtual workspace root must set the resolver",
+   "url": "https://doc.rust-lang.org/cargo/reference/workspaces.html",
+   "pattern": "resolver",
+   "value": "resolver"
+  },
+  {
+   "what": "a missing edition field means the 2015 edition",
+   "url": "https://doc.rust-lang.org/cargo/reference/manifest.html",
+   "pattern": "2015",
+   "value": "2015"
+  },
+  {
+   "what": "transcendental float functions vary by platform",
+   "url": "https://doc.rust-lang.org/std/primitive.f64.html",
+   "pattern": "non-deterministic",
+   "value": "non-deterministic"
+  },
+  {
+   "what": "wasm32-unknown-unknown has no threads and aborts on panic",
+   "url": "https://doc.rust-lang.org/rustc/platform-support/wasm32-unknown-unknown.html",
+   "pattern": "panic",
+   "value": "panic"
+  },
+  {
+   "what": "the rustwasm organization is archived",
+   "url": "https://blog.rust-lang.org/inside-rust/2025/07/21/sunsetting-the-rustwasm-github-org/",
+   "pattern": "wasm-bindgen",
+   "value": "wasm-bindgen"
+  },
+  {
+   "what": "line-tables-only is the minimal debug info for file and line backtraces",
+   "url": "https://doc.rust-lang.org/cargo/reference/profiles.html",
+   "pattern": "line-tables-only",
+   "value": "line-tables-only"
+  },
+  {
+   "what": "Cargo disables incremental compilation by default in CI",
+   "url": "https://doc.rust-lang.org/nightly/cargo/CHANGELOG.html",
+   "pattern": "disabled by default when running in CI",
+   "value": "disabled by default when running in CI"
+  },
+  {
+   "what": "Cargo advises one integration test crate split into modules when there are many",
+   "url": "https://doc.rust-lang.org/cargo/reference/cargo-targets.html",
+   "pattern": "single integration test",
+   "value": "single integration test"
+  }
+ ]
+}
