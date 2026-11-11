@@ -1,8 +1,10 @@
 #!/usr/bin/env node
 // Runs this repo's check steps from the coding rulebook's tool gates and writes the checks file reviewers read.
-//   node ci/gate.mjs [--checks FILE]   run every step; exit 1 when a step not on the backlog fails
-//   node ci/gate.mjs --trueup          run every step and write ci/gate-backlog.txt: the steps failing today
-// A step on the backlog that fails is "needs-work", never a failure, so an existing repo is not red on day one.
+//   node ci/gate.mjs [--dir FOLDER]... [--checks FILE]   run every step; exit 1 when a step not on the backlog fails
+//   node ci/gate.mjs [--dir FOLDER]... --trueup          also write ci/gate-backlog.txt: the steps failing today
+// Each --dir is a folder holding a Cargo.toml, package.json or pyproject.toml (default: the repo root), so one copy
+// serves a monorepo. A step on the backlog that fails is "needs-work", so an existing repo is not red on day one.
+// A tool that is not installed always fails and never goes on the backlog. No steps found at all exits 2.
 import { spawnSync } from "node:child_process";
 import { existsSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -10,11 +12,12 @@ import { join } from "node:path";
 
 const BACKLOG = "ci/gate-backlog.txt";
 const bin = (tool) => join("node_modules", ".bin", tool);
-const py = (tool) => (existsSync(join(".venv", "bin", tool)) ? join(".venv", "bin", tool) : tool);
 
-function steps() {
-  const has = (f) => existsSync(f);
-  const pkg = has("package.json") ? JSON.parse(readFileSync("package.json", "utf8")) : null;
+/** The steps for one folder, run from that folder, and the languages it has no manifest for. */
+function steps(dir) {
+  const has = (f) => existsSync(join(dir, f));
+  const py = (tool) => (has(join(".venv", "bin", tool)) ? join(".venv", "bin", tool) : tool);
+  const pkg = has("package.json") ? JSON.parse(readFileSync(join(dir, "package.json"), "utf8")) : null;
   const deps = { ...pkg?.dependencies, ...pkg?.devDependencies };
   const list = [];
   if (has("Cargo.toml")) {
@@ -46,40 +49,61 @@ function steps() {
       ["python:sbom", ["uv", "export", "--locked", "--offline", "--format", "cyclonedx1.5"], "sbom-python.cdx.json"],
     );
   }
-  return list;
+  const skipped = [["rust", "Cargo.toml"], ["js", "package.json"], ["python", "pyproject.toml"]].filter(([, f]) => !has(f));
+  return { list, skipped };
 }
 
 const args = process.argv.slice(2);
 const trueup = args.includes("--trueup");
 const at = args.indexOf("--checks");
 const checks = at >= 0 ? args[at + 1] : join(mkdtempSync(join(tmpdir(), "gate-")), "checks.jsonl");
+const dirs = args.flatMap((a, i) => (a === "--dir" ? [args[i + 1]] : []));
+if (dirs.length === 0) dirs.push(".");
 const backlog = existsSync(BACKLOG) ? readFileSync(BACKLOG, "utf8").split("\n").map((l) => l.trim()).filter((l) => l && !l.startsWith("#")) : [];
 const sha = spawnSync("git", ["rev-parse", "HEAD"], { encoding: "utf8" }).stdout.trim();
 
 const lines = [];
 const failing = [];
+const missing = [];
 let failed = false;
-for (const [id, [cmd, ...argv], sbomFile] of steps()) {
-  const run = spawnSync(cmd, argv, { encoding: "utf8", maxBuffer: 64 * 1024 * 1024 });
-  const exit = run.error ? null : run.status;
-  const text = run.error ? `${cmd}: not installed` : `${run.stdout}${run.stderr}`;
-  if (sbomFile && exit === 0) writeFileSync(join(checks, "..", sbomFile), run.stdout);
-  const ok = exit === 0;
-  // An SBOM is still being worked out: a missing exporter is needs-work, never a failure.
-  const status = ok ? "pass" : sbomFile || backlog.includes(id) ? "needs-work" : "fail";
-  if (!ok) failing.push(id);
-  if (status === "fail") failed = true;
-  const output = (sbomFile && ok ? `wrote ${sbomFile}` : text).trimEnd().split("\n").slice(-30).join("\n");
-  lines.push(JSON.stringify({ step: [cmd, ...argv].join(" "), exit_code: exit, sha, output, status }));
+let ran = 0;
+const record = (step, exit_code, output, status, id) => {
+  lines.push(JSON.stringify({ step, exit_code, sha, output, status }));
   console.log(`${status.padEnd(10)} ${id}`);
+};
+for (const dir of dirs) {
+  const prefix = dir === "." ? "" : `${dir}:`;
+  const { list, skipped } = steps(dir);
+  for (const [lang, manifest] of skipped) record(`${prefix}${lang}`, null, `no ${manifest} in ${dir}: not checked`, "skipped", `${prefix}${lang}`);
+  for (const [name, [cmd, ...argv], sbomFile] of list) {
+    const id = `${prefix}${name}`;
+    const run = spawnSync(cmd, argv, { cwd: dir, encoding: "utf8", maxBuffer: 64 * 1024 * 1024 });
+    ran += 1;
+    const exit = run.error ? null : run.status;
+    const text = run.error ? `${cmd}: not installed` : `${run.stdout}${run.stderr}`;
+    const sbom = sbomFile && `${prefix.replaceAll(/[/:]/g, "-")}${sbomFile}`;
+    if (sbom && exit === 0) writeFileSync(join(checks, "..", sbom), run.stdout);
+    const ok = exit === 0;
+    // An SBOM is still being worked out: a missing exporter is needs-work, never a failure.
+    // A tool that is not installed fails, so a skipped check never looks like a pass.
+    const status = ok ? "pass" : sbomFile ? "needs-work" : run.error ? "fail" : backlog.includes(id) ? "needs-work" : "fail";
+    if (!ok && !sbomFile) (run.error ? missing : failing).push(id);
+    if (status === "fail") failed = true;
+    const output = (sbom && ok ? `wrote ${sbom}` : text).trimEnd().split("\n").slice(-30).join("\n");
+    record([cmd, ...argv].join(" "), exit, `${dir === "." ? "" : `in ${dir}: `}${output}`, status, id);
+  }
 }
-writeFileSync(checks, lines.length ? `${lines.join("\n")}\n` : "");
+writeFileSync(checks, `${lines.join("\n")}\n`);
 console.log(`checks: ${checks}`);
+if (ran === 0) {
+  console.error(`gate: no Cargo.toml, package.json or pyproject.toml in ${dirs.join(", ")}: nothing was checked; name the folders with --dir`);
+  process.exit(2);
+}
+if (missing.length > 0) console.error(`not installed, so failing until installed: ${missing.join(", ")}`);
 
 if (trueup) {
-  const keep = failing.filter((id) => !id.endsWith(":sbom"));
-  writeFileSync(BACKLOG, `# Steps failing when the gate was adopted. Fix one, remove its line.\n${keep.join("\n")}\n`);
-  console.log(`wrote ${BACKLOG}: ${keep.length} step(s) on the backlog`);
+  writeFileSync(BACKLOG, `# Steps failing when the gate was adopted. Fix one, remove its line.\n${failing.join("\n")}\n`);
+  console.log(`wrote ${BACKLOG}: ${failing.length} step(s) on the backlog`);
   process.exit(0);
 }
 process.exit(failed ? 1 : 0);
