@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "catalog/homes.json, schema 2",
+  "description": "One home per shared piece, in every repo.",
+  "type": "object",
+  "required": ["schema", "about", "homes"],
+  "additionalProperties": false,
+  "properties": {
+    "schema": { "const": 2 },
+    "about": { "type": "string" },
+    "homes": { "type": "array", "items": { "$ref": "#/$defs/home" } }
+  },
+  "$defs": {
+    "home": {
+      "type": "object",
+      "required": ["id", "name", "does", "status", "lives", "home", "bypass", "bad"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z][a-z0-9_]*(\\.[a-z][a-z0-9_]*)+$", "description": "canonical capability id, unique in the file; the same id across repos names one lives.repo" },
+        "name": { "type": "string" },
+        "does": { "type": "string" },
+        "face": { "type": "array", "items": { "type": "string" } },
+        "status": { "enum": ["built", "planned", "stub"] },
+        "lives": {
+          "type": "object",
+          "required": ["repo", "path"],
+          "additionalProperties": false,
+          "properties": { "repo": { "type": "string", "minLength": 1 }, "path": { "type": "string" }, "rev": { "type": "string" } }
+        },
+        "used_by": { "type": "array", "items": { "type": "string" } },
+        "notes": { "type": "string" },
+        "kind": { "type": "string" },
+        "first": { "type": "string" },
+        "use": { "type": "string" },
+        "home": { "type": "string", "description": "<file>#<symbol> in this repo" },
+        "bypass": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+        "files": { "type": "string" },
+        "allow": { "type": "array", "items": { "type": "string" } },
+        "allow_why": { "type": "object", "additionalProperties": { "type": "string" } },
+        "except": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["file", "match", "why"],
+            "properties": { "file": { "type": "string" }, "match": { "type": "string" }, "why": { "type": "string", "minLength": 1 } }
+          }
+        },
+        "bad": { "type": "string" },
+        "planned": { "type": "boolean" }
+      }
+    }
+  }
+}

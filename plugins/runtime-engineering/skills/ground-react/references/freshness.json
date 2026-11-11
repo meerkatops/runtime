@@ -1,0 +1,131 @@
+{
+ "about": "Each fact this skill states in its own words, with the page that states it and a phrase that page must still carry. No checker ships with this skill: re-check each by hand against its page; when one fails, re-read the page and correct the skill and this line together.",
+ "watch": [
+  {
+   "what": "an error page receives retry, stable since Next.js 16.3, where earlier versions passed reset",
+   "url": "https://nextjs.org/docs/app/api-reference/file-conventions/error.md",
+   "pattern": "`retry` prop became stable",
+   "value": "v16.3.0"
+  },
+  {
+   "what": "fetch in a Server Component is not cached by default",
+   "url": "https://nextjs.org/docs/app/getting-started/fetching-data.md",
+   "pattern": "`fetch` requests are not cached by default",
+   "value": "not cached by default"
+  },
+  {
+   "what": "Cache Components is turned on with cacheComponents and partialPrefetching together",
+   "url": "https://nextjs.org/docs/app/getting-started/caching.md",
+   "pattern": "partialPrefetching: true",
+   "value": "cacheComponents: true, partialPrefetching: true"
+  },
+  {
+   "what": "eslint-config-next supports ESLint 9 and 10, and some of its plugins do not list ESLint 10 as a peer, which is why the starting package.json has overrides",
+   "url": "https://nextjs.org/docs/app/api-reference/config/eslint.md",
+   "pattern": "don't list ESLint 10 in their peer dependencies yet",
+   "value": "overrides for eslint-plugin-jsx-a11y, eslint-plugin-react and eslint-plugin-import"
+  },
+  {
+   "what": "typescript-eslint supports TypeScript below 6.1.0, which holds the starting package.json on TypeScript 6.0",
+   "url": "https://typescript-eslint.io/users/dependency-versions/",
+   "pattern": "4\\.8\\.4 (<|&lt;)6\\.1\\.0",
+   "value": ">=4.8.4 <6.1.0"
+  },
+  {
+   "what": "the React Compiler is stable",
+   "url": "https://react.dev/learn/react-compiler/introduction.md",
+   "pattern": "React Compiler is now stable",
+   "value": "stable"
+  },
+  {
+   "what": "Material UI's current major is 9, upgraded to from 7",
+   "url": "https://mui.com/material-ui/migration/upgrade-to-v9.md",
+   "pattern": "v7 to v9",
+   "value": "9"
+  },
+  {
+   "what": "a Material UI palette value may be a CSS custom property when nativeColor is on",
+   "url": "https://mui.com/material-ui/customization/css-theme-variables/native-color.md",
+   "pattern": "main: 'var\\(--colors-brand-primary\\)'",
+   "value": "nativeColor: true"
+  },
+  {
+   "what": "the App Router cache provider is imported from a path named for the Next.js major; the docs show v15 and the package also exports v16",
+   "url": "https://mui.com/material-ui/integrations/nextjs.md",
+   "pattern": "@mui/material-nextjs/v1[0-9]-appRouter",
+   "value": "@mui/material-nextjs/v16-appRouter"
+  },
+  {
+   "what": "the good thresholds for the Core Web Vitals",
+   "url": "https://web.dev/articles/vitals",
+   "pattern": "200 milliseconds",
+   "value": "LCP 2.5 s, INP 200 ms, CLS 0.1"
+  },
+  {
+   "what": "WCAG's reflow width, which the floor in the coding-rulebook's X13 sits above",
+   "url": "https://www.w3.org/WAI/WCAG22/Understanding/reflow.html",
+   "pattern": "320 CSS pixels",
+   "value": "320 CSS pixels"
+  },
+  {
+   "what": "Vitest does not support async Server Components",
+   "url": "https://nextjs.org/docs/app/guides/testing/vitest.md",
+   "pattern": "Vitest currently does not support them",
+   "value": "E2E tests for async components"
+  },
+  {
+   "what": "a Content Security Policy with a nonce is incompatible with Partial Prerendering, which is why the starting next.config.ts sends the policy without one",
+   "url": "https://nextjs.org/docs/app/guides/content-security-policy.md",
+   "pattern": "PPR\\) is incompatible",
+   "value": "headers() in next.config.ts, 'unsafe-inline' for script-src and style-src"
+  },
+  {
+   "what": "with Cache Components, synchronous reads and pure computations are prerendered into the static shell with no cache directive",
+   "url": "https://nextjs.org/docs/app/getting-started/caching.md",
+   "pattern": "complete during prerender and are included in the static shell automatically",
+   "value": "module imports, fs.readFileSync, pure computations"
+  },
+  {
+   "what": "connection() holds a read to its request; a synchronous database query is prerendered without it",
+   "url": "https://nextjs.org/docs/app/api-reference/functions/connection.md",
+   "pattern": "complete during prerendering",
+   "value": "await connection()"
+  },
+  {
+   "what": "updateTag expires a tag at once and can be called only in a Server Action",
+   "url": "https://nextjs.org/docs/app/getting-started/revalidating.md",
+   "pattern": "it can only be used in",
+   "value": "updateTag in app/actions.ts"
+  },
+  {
+   "what": "Next.js checks Origin against Host for a Server Action; the starting crash route makes its own check",
+   "url": "https://nextjs.org/docs/app/guides/data-security.md",
+   "pattern": "compare the \\[Origin header\\]",
+   "value": "Sec-Fetch-Site, then Origin against Host"
+  },
+  {
+   "what": "without a nonce, Material UI's injected styles need 'unsafe-inline'",
+   "url": "https://mui.com/material-ui/guides/content-security-policy.md",
+   "pattern": "is the only option",
+   "value": "style-src 'self' 'unsafe-inline'"
+  },
+  {
+   "what": "the theme's spacing can be changed; the starting theme sets it to a token",
+   "url": "https://mui.com/material-ui/customization/spacing.md",
+   "pattern": "8px scaling factor",
+   "value": "spacing: \"var(--space-unit)\""
+  },
+  {
+   "what": "with reuseExistingServer false, Playwright stops when the port is taken",
+   "url": "https://playwright.dev/docs/test-webserver",
+   "pattern": "throw if an existing process is listening",
+   "value": "reuseExistingServer: false, port 3217"
+  },
+  {
+   "what": "sendBeacon returns false when the data was not queued",
+   "url": "https://developer.mozilla.org/en-US/docs/Web/API/Navigator/sendBeacon",
+   "pattern": "Otherwise, it returns",
+   "value": "fetch with keepalive as the fallback"
+  }
+ ]
+}

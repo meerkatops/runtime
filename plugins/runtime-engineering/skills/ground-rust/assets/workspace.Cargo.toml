@@ -1,0 +1,72 @@
+# A template: replace every <product> placeholder before use; it is not valid TOML until then.
+[workspace]
+resolver = "3"
+members = ["crates/*"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.99"
+license = "Apache-2.0"
+repository = "https://github.com/<org>/<product>"
+
+# Every dependency the plan names, so no task edits this list; each crate's manifest line is added by the task
+# that first uses it. An addition here is a policy change.
+[workspace.dependencies]
+# The product's crates and its lib layer. A path dependency carries its version so it can never resolve elsewhere.
+<product>-core = { path = "crates/<product>-core", version = "0.1.0" }
+<product>-adapters = { path = "crates/<product>-adapters", version = "0.1.0" }
+<product>-app = { path = "crates/<product>-app", version = "0.1.0" }
+# A shared crate from another repo: a git dependency always pinned to a rev, fetched by the git CLI
+# (CARGO_NET_GIT_FETCH_WITH_CLI=true), never a branch.
+# lib-<capability> = { git = "https://github.com/<org>/<repo>", rev = "<sha>" }
+# The browser wrapper's binding, only in a repo with a browser crate.
+# wasm-bindgen = "0.2"
+
+[workspace.lints.rust]
+unsafe_code = "deny"   # a crate MAP.md lists under "## Unsafe crates" allows it at its root; forbid cannot be allowed below (E0453)
+missing_docs = "warn"  # a small face says what each item is
+
+[workspace.lints.clippy]
+pedantic = { level = "warn", priority = -1 } # what a lint can enforce lives here
+unwrap_used = "deny"                         # no panics in library code
+expect_used = "deny"                         # no panics in library code
+indexing_slicing = "deny"                    # no panics in library code
+panic = "deny"                               # no panics in library code
+todo = "deny"                                # no panics in library code
+unimplemented = "deny"                       # no panics in library code
+unreachable = "deny"                         # no panics in library code
+string_slice = "deny"                        # a byte slice of a str panics off a char boundary
+exit = "deny"                                # process::exit skips Drop
+mem_forget = "deny"                          # mem::forget skips Drop
+print_stdout = "deny"                        # answer is the one writer
+print_stderr = "deny"                        # answer is the one writer
+dbg_macro = "deny"                           # answer is the one writer
+too_many_lines = "warn"                      # a function fits in one read
+excessive_nesting = "warn"                   # a function fits in one read
+too_many_arguments = "warn"                  # a small face
+wildcard_imports = "warn"                    # every name's home is visible
+
+# Dev and test builds: our crates keep file:line backtraces, dependencies carry no debug info, so a cold
+# target is smaller and builds faster (ground-rust rules, "Where builds live").
+[profile.dev]
+debug = "line-tables-only"
+
+[profile.dev.package."*"]
+debug = 0
+
+# panic = "abort" skips Drop, so on-disk state never relies on it. Line tables stay, unstripped, so a crash
+# record's backtrace carries file:line. overflow-checks stays on in release (a wrong number is worse than a slower
+# one): a proven kernel opts out with [profile.release.package.<kernel>] overflow-checks = false
+# and a measured reason in MAP.md; a crate that parses outside bytes never does.
+[profile.release]
+lto = true
+codegen-units = 1
+panic = "abort"
+debug = "line-tables-only"
+strip = "none"
+overflow-checks = true
+
+# Benchmarks measure the shipped profile.
+[profile.bench]
+inherits = "release"

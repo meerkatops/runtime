@@ -1,0 +1,41 @@
+# The dependency audit: licenses, advisories, bans and sources, read by `cargo deny --locked check`.
+# A change here is a policy change, reviewed like code.
+
+[graph]
+# Every feature, so an optional dependency is audited too.
+all-features = true
+
+[advisories]
+# RustSec advisories are errors; a yanked crate is refused too.
+yanked = "deny"
+# Unsound advisories in every dependency, not only direct ones (cargo-deny defaults to "workspace").
+unsound = "all"
+
+[licenses]
+allow = [
+  "MIT",
+  "Apache-2.0",
+  "BSD-2-Clause",
+  "BSD-3-Clause",
+  "ISC",
+  "Zlib",
+  "Unicode-3.0",
+  "CDLA-Permissive-2.0",
+]
+confidence-threshold = 0.9
+# The list is the same in every repo, so a repo may not link every license on it.
+unused-allowed-license = "allow"
+
+[bans]
+# Duplicate versions are warned, not refused, so an update is not blocked by them.
+multiple-versions = "warn"
+wildcards = "deny"
+# Path dependencies inside this workspace carry a version, so the wildcard ban does not catch them.
+allow-wildcard-paths = true
+
+[sources]
+unknown-registry = "deny"
+unknown-git = "deny"
+allow-registry = ["https://github.com/rust-lang/crates.io-index"]
+# The repo's own GitHub organization: its shared crates, each a git dependency pinned to a rev.
+allow-org = { github = ["<org>"] }

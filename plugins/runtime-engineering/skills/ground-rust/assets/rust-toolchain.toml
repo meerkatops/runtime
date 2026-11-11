@@ -1,0 +1,5 @@
+# Clippy's lints change by version, so -D warnings must judge every developer machine and CI with one toolchain.
+# rust-version in Cargo.toml is this channel's minor: the floor is what we build. A published crate adds an MSRV check then.
+[toolchain]
+channel = "1.99.1"
+components = ["clippy", "rustfmt"]

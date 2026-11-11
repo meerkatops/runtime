@@ -1,0 +1,59 @@
+{
+ "about": "Each fact this skill states in its own words, with the page that states it and a phrase that page must still carry. No checker ships with this skill: re-check each by hand against its page; when one fails, re-read the page and correct the skill and this line together.",
+ "watch": [
+  {
+   "what": "the build-system table should always be present",
+   "url": "https://packaging.python.org/en/latest/guides/writing-pyproject-toml/",
+   "pattern": "build-system",
+   "value": "build-system"
+  },
+  {
+   "what": "the src layout keeps the working copy off the import path",
+   "url": "https://packaging.python.org/en/latest/discussions/src-layout-vs-flat-layout/",
+   "pattern": "src layout",
+   "value": "src layout"
+  },
+  {
+   "what": "the runtime does no type checking",
+   "url": "https://peps.python.org/pep-0484/",
+   "pattern": "no type checking happens at runtime",
+   "value": "no type checking happens at runtime"
+  },
+  {
+   "what": "blocking code must not be called in the event loop",
+   "url": "https://docs.python.org/3/library/asyncio-dev.html",
+   "pattern": "run_in_executor",
+   "value": "run_in_executor"
+  },
+  {
+   "what": "dependency groups are not part of the built package's metadata",
+   "url": "https://packaging.python.org/en/latest/specifications/dependency-groups/",
+   "pattern": "not included in project metadata",
+   "value": "not included in project metadata"
+  },
+  {
+   "what": "pytest reads native TOML from [tool.pytest] since 9.0",
+   "url": "https://docs.pytest.org/en/stable/reference/customize.html",
+   "pattern": "supported since pytest 9.0",
+   "value": "supported since pytest 9.0"
+  },
+  {
+   "what": "pytest exits 5 when it collects no tests",
+   "url": "https://docs.pytest.org/en/stable/reference/exit-codes.html",
+   "pattern": "No tests were collected",
+   "value": "No tests were collected"
+  },
+  {
+   "what": "pyright's default typeCheckingMode is standard",
+   "url": "https://microsoft.github.io/pyright/configuration.md",
+   "pattern": "The default value for this setting is \"standard\"",
+   "value": "The default value for this setting is \"standard\""
+  },
+  {
+   "what": "ruff's select replaces the default rule set and extend-select adds to it",
+   "url": "https://docs.astral.sh/ruff/settings/",
+   "pattern": "replaces the default rule set",
+   "value": "replaces the default rule set"
+  }
+ ]
+}

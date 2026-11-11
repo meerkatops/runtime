@@ -1,0 +1,78 @@
+name: ci
+
+on:
+  # The gate a developer machine runs, `ci/check.sh`, on every push to main and every pull request.
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  CARGO_TERM_COLOR: never
+  GITLEAKS_VERSION: 8.30.1
+  GITLEAKS_SHA256: 551f6fc83ea457d62a0d98237cbad105af8d557003051f41f3e7ca7b3f2470eb
+
+jobs:
+  # Each job installs the toolchain rust-toolchain.toml pins. No MSRV job: rust-version is the pin's minor. No
+  # cargo-update build: that canary runs on a developer machine before each release, never per push.
+  rust:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - job: check
+            run: ci/check.sh
+            tools: cargo-deny@=0.20.2
+            gitleaks: "true"
+          - job: lib-imports
+            run: ci/check-lib-imports.sh
+    name: ${{ matrix.job }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+      - name: Toolchains
+        run: |
+          rustup toolchain install
+      - name: Tools
+        if: matrix.tools != ''
+        run: cargo install --locked ${{ matrix.tools }}
+      # check.sh ends in ci/gitleaks.sh, which fails closed without the CLI: jobs share no installed tool, so the
+      # check job installs it too, the same version and checksum as the history job below.
+      - name: Install gitleaks, checked against its release checksum
+        if: matrix.gitleaks == 'true'
+        run: |
+          set -eu
+          archive="gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz"
+          curl -fsSL -o "$RUNNER_TEMP/$archive" "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/$archive"
+          echo "$GITLEAKS_SHA256  $RUNNER_TEMP/$archive" | sha256sum -c -
+          tar -xzf "$RUNNER_TEMP/$archive" -C "$RUNNER_TEMP" gitleaks
+          echo "$RUNNER_TEMP" >> "$GITHUB_PATH"
+      - run: ${{ matrix.run }}
+
+  # The gitleaks CLI over the whole history (its Action needs a paid org license), through ci/gitleaks.sh.
+  gitleaks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          fetch-depth: 0 # outside: actions/checkout's input; 0 fetches the whole history
+          persist-credentials: false
+      - name: Install gitleaks, checked against its release checksum
+        run: |
+          set -eu
+          archive="gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz"
+          curl -fsSL -o "$RUNNER_TEMP/$archive" "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/$archive"
+          echo "$GITLEAKS_SHA256  $RUNNER_TEMP/$archive" | sha256sum -c -
+          tar -xzf "$RUNNER_TEMP/$archive" -C "$RUNNER_TEMP" gitleaks
+          echo "$RUNNER_TEMP" >> "$GITHUB_PATH"
+      - run: ci/gitleaks.sh HEAD
